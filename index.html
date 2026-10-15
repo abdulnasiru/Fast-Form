@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> FastForm</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  </head>
+  <body>
+    <div id="app">
+      <section id="builderView" class="app-view">
+    <div class="form-container">
+      <header class="form-header">
+        <h1>Welcome To FastForm</h1>
+        <p>
+          Please fill out the form below carefully.All required questions must be answered.</p>
+      </header>
+      <div class="form-progress">
+        <div class="progress-info">
+          <span id="progressText">
+            0 of 6 questions answered
+          </span>
+          <span id="progressPercentage">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+      <div class="builder-header">
+        <div class="theme-panel">
+          <div class="theme-panel-header">
+            <i class="fa-solid fa-palette"></i>
+            <span>Form theme</span>
+          </div>
+          <div id="themeOptions" class="theme-options"></div>
+        </div>
+        <div class="style-panel">
+          <div class="style-panel-header">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Form style</span>
+          </div>
+          <div id="styleOptions"></div>
+        </div>
+        <input
+        type="text"
+        id="formTitle"
+        class="form-title-input"
+        placeholder="Untitled form">
+        <textarea
+        id="formDescription"
+        class="form-description-input"
+        placeholder="Form description"></textarea>
+      </div>
+        <div class="mode-switcher">
+      <button type="button"
+        class="question-action"
+        data-action="duplicate"
+        title="Duplicate question">
+    <i class="fa-regular fa-copy"></i>
+</button>
+      <button type="button"
+        id="previewModeBtn"
+        class="mode-btn">
+      <i class="fa-solid fa-eye"></i>
+      Preview
+    </button>
+    <div id="previewSubmitContainer" class="preview-submit-container">
+     <button type="button"
+       id="previewSubmitBtn"
+       class="preview-submit-btn">Submit</button>
+    </div>
+        </div>
+        <div class="save-status" id="saveStatus">
+          <i class="fa-solid fa-cloud"></i>
+          <span>Saved</span>
+          <button type="button"
+            class="question-drag-handle"
+            title="Drag question"
+            aria-label="Drag question">
+    <i class="fa-solid fa-grip-vertical"></i>
+</button>
+        </div>
+        <div id="builderQuestions"></div>
+        <div id="previewHeader"></div>
+        <div id="dynamicQuestions"></div>
+        <div class="add-question-container">
+          <button type="button"
+            id="addQuestionBtn"
+            class="add-question-btn"
+            data-action="add-question">
+            <i class="fa-solid fa-plus"></i> Add question</button>
+          <button type="button"
+            class="section-drag-handle"
+            title="Drag section"
+            aria-label="Drag section">
+          <i class="fa-solid fa-grip-vertical"></i></button>
+          <button id="addSectionBtn"
+             type="button"
+             class="builder-action-btn">
+    <i class="fa-solid fa-layer-group"></i>
+    <span> Add section </span>
+</button>
+<div id="builderSections" class="builder-sections"></div>
+    </div>
+        <button id="flowMapBtn" type="button" class="builder-action-btn">
+    <i class="fa-solid fa-diagram-project"></i>
+    <span>Flow</span>
+</button>
+        
+    <div class="history-controls">
+     <button id="undoBtn" type="button" title="Undo">
+            <i class="fa-solid fa-rotate-left"></i>
+    </button>
+    <button id="redoBtn" type="button" title="Redo">
+    <i class="fa-solid fa-rotate-right"></i></button>
+    </div>
+
+    <div class="file-controls">
+    <button id="exportFormBtn" type="button" class="file-action-btn">
+    <i class="fa-solid fa-file-export"></i>
+    <span>Export</span>
+      </button>
+    <button id="importFormBtn" type="button" class="file-action-btn">
+    <i class="fa-solid fa-file-import"></i>
+      <span>Import</span>
+    </button>
+    <input id="importFormInput"
+      type="file"
+      accept=".json,application/json"
+      hidden>
+    <button id="newFormBtn" type="button" class="file-action-btn">
+    <i class="fa-solid fa-file-circle-plus"></i>
+    <span>New</span>
+  </button>
+        </div>
+    <div class="mode-switcher">
+    <button id="builderModeBtn" class="mode-btn active" type="button">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Builder
+        </button>
+    <button id="respondentModeBtn" class="mode-btn" type="button">
+    <i class="fa-solid fa-eye"></i>
+        Preview
+      </button>
+          </div>
+
+    <button type="button" id="openFlowMap" class="toolbar-action">
+    <i class="fa-solid fa-diagram-project"></i>
+    <span>Flow map</span>
+</button>
+
+     <div id="questionPickerOverlay"
+    class="picker-overlay"
+    hidden>
+    <div class="question-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="questionPickerTitle">
+    <div class="picker-header">
+    <div>
+    <h2 id="questionPickerTitle">Add something</h2>
+        <p> Choose a question or template</p>
+            </div>
+    <button id="closeQuestionPicker"
+        type="button"
+        class="picker-close"
+        aria-label="Close">
+    <i class="fa-solid fa-xmark"></i>
+    </button>
+        </div>
+        <div class="picker-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="questionPickerSearch"
+        type="search"
+        placeholder="Search questions and templates..."
+        autocomplete="off">
+        <kbd> / </kbd>
+        </div>
+    <div id="questionPickerResults" class="picker-results"></div>
+    </div>
+</div>
+<aside id="questionInspector"
+    class="question-inspector"
+    aria-hidden="true">
+
+    <div class="inspector-header">
+        <div>
+            <span class="inspector-eyebrow">
+                QUESTION
+            </span>
+            <h2>
+                Question settings
+            </h2>
+        </div>
+        <button id="closeQuestionInspector"
+            type="button"
+            class="inspector-close"
+            aria-label="Close question settings">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div id="questionInspectorBody" class="inspector-body"></div>
+    <div class="inspector-footer">
+        <button type="button"
+            class="inspector-delete"
+            id="inspectorDeleteQuestion">
+            <i class="fa-regular fa-trash-can"></i>
+            Delete question
+        </button>
+    </div>
+</aside>
+<div id="inspectorBackdrop"
+    class="inspector-backdrop" hidden></div>
+  <div class="inspector-toggle">
+    <div>
+        <strong>
+            Required
+        </strong>
+        <span>
+            Respondents must answer this question.
+        </span>
+    </div>
+    <label class="switch">
+        <input id="inspectorRequired" type="checkbox">
+        <span class="switch-slider"></span>
+    </label>
+    <div class="inspector-group">
+    <div class="inspector-group-title">
+        Logic
+    </div>
+    <button type="button"
+        id="openLogicBuilder"
+        class="logic-builder-button">
+        <span class="logic-button-icon">
+            <i class="fa-solid fa-code-branch"></i>
+        </span>
+        <span>
+            <strong>
+                Conditional logic
+            </strong>
+            <small>
+                Control what happens after this answer
+            </small>
+        </span>
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+</div>
+
+<div id="logicBuilderOverlay" class="logic-overlay" hidden>
+    <div class="logic-builder" role="dialog" aria-modal="true">
+        <div class="logic-header">
+            <div>
+                <span class="inspector-eyebrow">
+                    LOGIC
+                </span>
+                <h2>
+                    Conditional logic
+                </h2>
+                <p>
+                    Decide where respondents go next.
+                </p>
+            </div>
+            <button type="button"
+                id="closeLogicBuilder"
+                class="picker-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="logicBuilderBody" class="logic-body"></div>
+        <div class="logic-footer">
+    <button type="button" id="cancelLogic" class="secondary-button">
+                Cancel
+            </button>
+            <button type="button"
+                id="saveLogic"
+                class="primary-button">
+                Save logic
+            </button>
+        </div>
+    </div>
+</div>
+        </div>
+        </section>
+
+        <section id="respondentView" class="app-view" hidden>
+      <div class="respondent-shell">
+        <div class="respondent-progress">
+          <div id="respondentProgressBar" class="respondent-progress-bar"></div>
+        </div>
+        <div class="respondent-header">
+          <h1 id="respondentTitle">Untitled form</h1>
+          <p id="respondentDescription"></p>
+        </div>
+        <div id="respondentQuestions" class="respondent-questions"></div>
+        <div class="respondent-navigation">
+          <button id="respondentBackBtn"
+            type="button"
+            class="respondent-nav-btn secondary">
+        <i class="fa-solid fa-arrow-left"></i>Back</button>
+        <span id="respondentStep" class="respondent-step"></span>
+        <button id="respondentNextBtn"
+          type="button"
+          class="respondent-nav-btn primary">Continue
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+        </div>
+      </div>
+    </section></div>
+
+    <div id="flowMapOverlay" class="flow-map-overlay" hidden>
+    <div class="flow-map-window">
+        <header class="flow-map-header">
+          <div class="flow-map-title">
+                <span class="inspector-eyebrow">
+                    FORM ARCHITECTURE
+                </span>
+                <h2>Flow map</h2>
+                <p>Visualize how respondents move through your form.</p>
+                </div>
+            <div class="flow-map-actions">
+                <button type="button"
+                    id="resetFlowMap"
+                    class="flow-map-tool"
+                    title="Reset view"
+                    aria-label="Reset view">
+                    <i class="fa-solid fa-crosshairs"></i>
+                </button>
+                <button type="button"
+                    id="closeFlowMap"
+                    class="flow-map-tool"
+                    title="Close"
+                    aria-label="Close flow map">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </header>
+        <div id="flowMapCanvas" class="flow-map-canvas" >
+            <div id="flowMapWorld" class="flow-map-world" >
+            <svg id="flowConnections" class="flow-connections"
+            aria-hidden="true"></svg>
+          </div></div>
+<button type="button"
+    id="openFlowHealth"
+    class="toolbar-action">
+  <i class="fa-solid fa-heart-pulse"></i>
+  <span>Flow health</span>
+    <span id="flowIssueBadge" class="flow-issue-badge">0</span>
+</button>
+        <footer class="flow-map-footer">
+            <div class="flow-map-legend">
+                <span>
+                    <i class="flow-dot start"></i>
+                    Start
+                </span>
+                <span>
+                    <i class="flow-dot section"></i>
+                    Section
+                </span>
+                <span>
+                    <i class="flow-dot question"></i>
+                    Question
+                </span>
+                <span>
+                    <i class="flow-dot end"></i>
+                    End
+                </span>
+            </div>
+            <div class="flow-map-zoom">
+                <button id="flowZoomOut" type="button"
+                aria-label="Zoom out">-</button>
+                <span id="flowZoomValue">100%</span>
+
+                <button id="flowZoomIn" type="button"
+                aria-label="Zoom in">+</button>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<div id="flowHealthOverlay" class="flow-health-overlay" hidden>
+    <div class="flow-health-panel">
+        <header class="flow-health-header">
+            <div>
+                <span class="inspector-eyebrow">
+                    FLOW INTELLIGENCE
+                </span>
+                <h2> Flow health</h2>
+                <p>
+                    We analyze how respondents can move through your form.
+                </p>
+            </div>
+            <button type="button"
+                id="closeFlowHealth"
+                class="flow-map-tool">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </header>
+        <div id="flowHealthSummary" class="flow-health-summary"></div>
+        <div id="flowHealthIssues" class="flow-health-issues"></div>
+    </div>
+</div>
+
+<button type="button" id="debugFormSchema" class="toolbar-action">
+    <i class="fa-solid fa-code"></i>
+    Schema
+</button>
+<section id="runtimeApp" class="runtime-app" hidden>
+    <div class="runtime-shell">
+        <header class="runtime-header">
+            <div>
+        <span id="runtimeProgressLabel" class="runtime-progress-label">
+                    Section 1
+                </span>
+                <div class="runtime-progress-track">
+            <div id="runtimeProgressBar" class="runtime-progress-bar"></div>
+                </div>
+            </div>
+        </header>
+        <div id="runtimeContent" class="runtime-content"></div>
+        <footer id="runtimeNavigation" class="runtime-navigation"></footer>
+    </div>
+</section>
+
+      <form id="googleForm">
+        <section class="question" data-question>
+          <label for="fullName">Full Name</label>
+          <input 
+          type="text"
+          id="fullName"
+          name="fullName"
+          placeholder="Enter your full name" required>
+          <small class="error-message" id="fullNameError"></small>
+          </section>
+        <section class="question" data-question>
+          <label for="email">Email Address</label>
+          <input 
+          type="email"
+          id="email"
+          name="email"
+          placeholder="example@email.com" required>
+          <small class="error-message" id="emailError"></small>
+        </section>
+        <section class="question" data-question>
+           <label>What is your level ?</label>
+        <div class="option">
+          <input
+          type="radio"
+          id="level100"
+          name="level"
+          value="100">
+          <label for="level100">Level 100</label>
+          </div>
+          <div class="option">
+            <input
+            type="radio"
+            id="level200"
+            name="level"
+            value="200">
+            <label for="level200">Level 200</label>
+          </div>
+          <div class="option">
+            <input 
+            type="radio"
+            id="level300"
+            name="level"
+            value="300">
+            <label for="level300">Level 300</label>
+          </div>
+          <div class="option">
+            <input
+            type="radio"
+            id="level400"
+            name="level"
+            value="400">
+            <label for="level400">Level 400</label>
+          </div>
+          <small class="error-message" id="levelError"></small>
+        </section>
+        <section class="question" data-question>
+          <label>Which technologies do you use?</label>
+          <div class="option">
+            <input
+            type="checkbox"
+            id="html"
+            name="technologies"
+            value="html">
+            <label for="html">HTML</label>
+          </div>
+          <div class="option">
+            <input
+            type="checkbox"
+            id="css"
+            name="technologies"
+            value="css">
+            <label for="css">CSS</label>
+          </div>
+          <div class="option">
+            <input
+            type="checkbox"
+            id="javascript"
+            name="technologies"
+            value="JavaScript">
+            <label for="javascript">JavaScript</label>
+          </div>
+          <div class="option">
+            <input
+            type="checkbox"
+            id="python"
+            name="technologies"
+            value="Python">
+            <label for="python">Python</label>
+          </div>
+        </section>
+        <section class="question" data-question>
+          <label for="department">Department</label>
+          <select id="department" name="department" required>
+            <option value="">Select your department</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="computer-science">Computer Science</option>
+            <option value="physics">Physics</option>
+            <option value="statistics">Statistics</option>
+          </select>
+          <small class="error-message" id="departmentError"></small>
+        </section>
+        <section class="question" data-question>
+          <label for="message">Tell us something about yourself</label>
+          <textarea
+          id="message"
+          name="message"
+          rows="5"
+          placeholder="Type your response here..."></textarea>
+        </section>
+
+        <div class="form-actions">
+          <button type="submit">Submit</button>
+        </div></form>
+
+      <section class="success-screen" id="successScreen">
+        <div class="success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h2>Response submitted</h2>
+        <p>Your response has been recorded successfully.</p>
+        <button type="button" id="submitAnother">
+          Submit another response
+        </button>
+      </section>
+    <script src="script.js"></script>
+  </body>
+</html>
